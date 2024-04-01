@@ -138,6 +138,10 @@ def extract_prometheus_sd_config(obj, labels):
     if scheme and isinstance(scheme, str):
         labels["__scheme__"] = scheme
 
+    job = prometheus_sd_config.get("job", None)
+    if job and isinstance(job, str):
+        labels["job"] = job
+
 
 def extract_parent(obj, labels: LabelDict):
     labels['parent'] = obj.parent.name
