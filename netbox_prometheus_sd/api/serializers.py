@@ -36,6 +36,10 @@ class SDConfigContextDuplicateSerializer(serializers.ListSerializer):
                 ):
                     continue
 
+                if (prometheus_sd_config.get("name", "-") not in
+                    item.tags.values_list('name', flat=True).all()):
+                    continue
+
                 item._injected_prometheus_sd_config = prometheus_sd_config # pylint: disable=protected-access
                 appended = True
                 ret.append(self.child.to_representation(item))
