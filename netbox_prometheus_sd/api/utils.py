@@ -119,8 +119,12 @@ def extract_rack(obj, labels: LabelDict):
 def extract_custom_fields(obj, labels: LabelDict):
     if hasattr(obj, "custom_field_data") and obj.custom_field_data is not None:
         for key, value in obj.custom_field_data.items():
+            # Render prometheus labels as list of strings
+            if isinstance(value, dict) and key.lower() == "prometheus_labels":
+                for label_key, label_value in value.items():
+                    labels[f"custom_field_{key.lower()}_{label_key.lower()}"] = str(label_value)
             # Render primitive value as string representation
-            if not hasattr(value, '__dict__'):
+            elif not hasattr(value, '__dict__'):
                 labels["custom_field_" + key.lower()] = str(value)
             # Complex types are rendered as json
             else:
