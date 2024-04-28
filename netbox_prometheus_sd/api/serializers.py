@@ -36,10 +36,6 @@ class SDConfigContextDuplicateSerializer(serializers.ListSerializer):
                 ):
                     continue
 
-                if (prometheus_sd_config.get("name", "-") not in
-                    item.tags.values_list('name', flat=True).all()):
-                    continue
-
                 item._injected_prometheus_sd_config = prometheus_sd_config # pylint: disable=protected-access
                 appended = True
                 ret.append(self.child.to_representation(item))
@@ -88,6 +84,7 @@ class PrometheusDeviceSerializer(serializers.ModelSerializer, PrometheusTargetsM
         utils.extract_contacts(obj, labels)
         utils.extract_rack(obj, labels)
         utils.extract_custom_fields(obj, labels)
+        utils.extract_ips(obj, labels)
 
         if hasattr(obj, "role") and obj.role is not None:
             labels["role"] = obj.role.name
@@ -132,6 +129,7 @@ class PrometheusVirtualMachineSerializer(serializers.ModelSerializer, Prometheus
         utils.extract_services(obj, labels)
         utils.extract_contacts(obj, labels)
         utils.extract_custom_fields(obj, labels)
+        utils.extract_ips(obj, labels)
 
         if hasattr(obj, "role") and obj.role is not None:
             labels["role"] = obj.role.name
